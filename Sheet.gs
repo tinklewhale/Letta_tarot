@@ -111,6 +111,22 @@ function checkSetup() {
 }
 
 /**
+ * 텔레그램 알림 설정 함수
+ * 사용법: token과 chatId를 입력 후 실행 (1회만 실행하면 됨)
+ * Chat ID 확인: https://api.telegram.org/bot{TOKEN}/getUpdates
+ */
+function setTelegramConfig() {
+  var token = 'YOUR_BOT_TOKEN_HERE';  // ← BotFather에서 발급받은 토큰으로 변경
+  var chatId = 'YOUR_CHAT_ID_HERE';   // ← 알림 받을 채팅/채널 ID로 변경
+
+  PropertiesService.getScriptProperties().setProperty('TELEGRAM_BOT_TOKEN', token);
+  PropertiesService.getScriptProperties().setProperty('TELEGRAM_CHAT_ID', chatId);
+  Logger.log('✅ 텔레그램 설정 완료');
+  Logger.log('토큰: ' + token.substring(0, 10) + '...');
+  Logger.log('채팅 ID: ' + chatId);
+}
+
+/**
  * 테스트용: doGet 함수를 직접 테스트
  */
 function testGetRemainingSlots() {

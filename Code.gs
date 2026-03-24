@@ -5,7 +5,7 @@
 
 // ── 설정 ──
 // Google Sheet ID (URL에서 복사: /d/SHEET_ID/edit)
-var SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE';
+var SHEET_ID = '1Hw1MkdMCleE34ko24qtGH4CYqYBZToAVN-_dQGo20ao';
 var CONSULTATIONS_SHEET = 'Consultations';
 var SETTINGS_SHEET = 'Settings';
 
@@ -211,6 +211,16 @@ function submitConsultation_(params) {
     sheet.appendRow([newId, now, nickname, passwordHash, consent, story, '', 'pending', '', '']);
     incrementTodayCount_();
 
+    // 텔레그램 알림 (실패해도 상담 제출에 영향 없음)
+    try {
+      var msg = '🔮 <b>새 상담이 신청되었어요!</b>\n\n'
+        + '👤 닉네임: ' + nickname + '\n'
+        + '🕐 시간: ' + now + '\n'
+        + '📋 동의: ' + (consent ? '✅ 동의' : '❌ 비동의') + '\n\n'
+        + '📝 사연 미리보기:\n' + story.substring(0, 100) + (story.length > 100 ? '...' : '');
+      sendTelegramNotification_(msg);
+    } catch (e) {}
+
     return { success: true, id: newId };
   } finally {
     lock.releaseLock();
@@ -234,6 +244,15 @@ function submitFeedback_(params) {
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] === id && data[i][2] === nickname && data[i][3] === passwordHash) {
       sheet.getRange(i + 1, 9).setValue(feedback); // feedback 컬럼 (0-indexed 8 → 1-indexed 9)
+
+      // 텔레그램 알림 (실패해도 후기 제출에 영향 없음)
+      try {
+        var fbMsg = '🌸 <b>후기가 등록되었어요!</b>\n\n'
+          + '👤 닉네임: ' + nickname + '\n\n'
+          + '💬 후기:\n' + feedback.substring(0, 200);
+        sendTelegramNotification_(fbMsg);
+      } catch (e) {}
+
       return { success: true };
     }
   }
@@ -440,4 +459,22 @@ function rowToConsultation_(row) {
 function sanitize_(str) {
   // CSV 인젝션 방지: 셀 값 앞의 수식 문자 제거
   return String(str).replace(/^[=+\-@\t\r]/, "'$&").trim();
+}
+
+// ── 텔레그램 알림 ──
+function sendTelegramNotification_(message) {
+  var token = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
+  var chatId = PropertiesService.getScriptProperties().getProperty('TELEGRAM_CHAT_ID');
+  if (!token || !chatId) return; // 설정 없으면 조용히 스킵
+
+  UrlFetchApp.fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify({
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'HTML'
+    }),
+    muteHttpExceptions: true
+  });
 }
