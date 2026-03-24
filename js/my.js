@@ -77,7 +77,7 @@
     }
     // 상태 4: 답변 완료
     if (status === 'answered') {
-      renderAnswered(consultation);
+      renderAnswered(consultation, slotResult);
       return;
     }
     // 상태 5: 거절
@@ -277,8 +277,9 @@
   }
 
   /* ── 상태 4: 답변 완료 ── */
-  function renderAnswered(c) {
+  function renderAnswered(c, slotResult) {
     const hasFeedback = c.feedback && c.feedback.trim();
+    const canApply = slotResult && slotResult.serviceActive && slotResult.remaining > 0;
 
     mainContent.innerHTML = `
       <div class="card card--magical" style="animation-delay:0s;">
@@ -309,10 +310,24 @@
       </div>
 
       ${hasFeedback ? renderFeedbackSubmitted(c.feedback) : renderFeedbackForm(c.id)}
+
+      ${canApply ? `
+      <div class="card text-center" style="animation-delay:0.32s;">
+        <p class="hint mb-md">새로운 고민이 있으신가요? ✨</p>
+        <button class="btn btn--primary" id="new-consult-btn">새 상담 신청하기 🌙</button>
+      </div>
+      ` : ''}
     `;
 
     if (!hasFeedback) {
       setupFeedbackForm(c);
+    }
+
+    const newConsultBtn = document.getElementById('new-consult-btn');
+    if (newConsultBtn) {
+      newConsultBtn.addEventListener('click', () => {
+        renderNewForm(slotResult.remaining, slotResult.dailyLimit);
+      });
     }
   }
 
