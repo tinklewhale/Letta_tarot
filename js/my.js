@@ -38,7 +38,7 @@
         API.getRemainingSlots(),
         API.getUserConsultation(user.nickname, user.password),
       ]);
-      renderState(slotResult, consultResult.consultation);
+      renderState(slotResult, consultResult.consultation, consultResult.history || []);
     } catch (err) {
       if (err.code === 'AUTH_FAILED') {
         sessionStorage.removeItem('taroUser');
@@ -57,7 +57,7 @@
   }
 
   /* ── 상태별 렌더링 ── */
-  function renderState(slotResult, consultation) {
+  function renderState(slotResult, consultation, history = []) {
     const status = consultation ? consultation.status : null;
 
     // 상태 1: 신규 + 슬롯 없음 또는 서비스 비활성
@@ -72,12 +72,12 @@
     }
     // 상태 3: 대기중
     if (status === 'pending') {
-      renderPending(consultation);
+      renderPending(consultation, history);
       return;
     }
     // 상태 4: 답변 완료
     if (status === 'answered') {
-      renderAnswered(consultation, slotResult);
+      renderAnswered(consultation, slotResult, history);
       return;
     }
     // 상태 5: 거절
@@ -246,7 +246,7 @@
   }
 
   /* ── 상태 3: 대기중 ── */
-  function renderPending(c) {
+  function renderPending(c, history = []) {
     mainContent.innerHTML = `
       <div class="card card--magical" style="animation-delay:0s;">
         <div class="status-section">
@@ -270,6 +270,27 @@
       <div class="text-center">
         <button class="btn btn--ghost" onclick="loadPage()">🔄 새로고침</button>
       </div>
+
+      ${history.length > 0 ? `
+      <div style="margin-top:var(--sp-lg);">
+        <div class="card__title" style="padding: 0 0 var(--sp-sm) 0; color:var(--color-text-light); font-size:var(--fs-sm);">✦ 이전 상담 내역</div>
+        ${history.map((h, idx) => `
+        <div class="card" style="animation-delay:${0.08 * (idx + 1)}s;">
+          <div class="card-label">
+            <span>✍️ 제출한 사연</span>
+            <span class="meta-date">${UI.formatDate(h.createdAt)}</span>
+          </div>
+          <div class="story-card">${UI.nl2br(h.story)}</div>
+          <div class="card-label" style="margin-top:var(--sp-md);">
+            <span>🌙 레타의 답변</span>
+            <span class="meta-date">${UI.formatDate(h.answeredAt)}</span>
+          </div>
+          <div class="answer-card">${UI.nl2br(h.answer)}</div>
+          ${h.feedback ? `<div class="feedback-box" style="margin-top:var(--sp-sm);"><p class="feedback-submitted">"${UI.nl2br(h.feedback)}"</p></div>` : ''}
+        </div>
+        `).join('')}
+      </div>
+      ` : ''}
     `;
 
     // loadPage를 전역에서 접근 가능하게
@@ -277,7 +298,7 @@
   }
 
   /* ── 상태 4: 답변 완료 ── */
-  function renderAnswered(c, slotResult) {
+  function renderAnswered(c, slotResult, history = []) {
     const hasFeedback = c.feedback && c.feedback.trim();
     const canApply = slotResult && slotResult.serviceActive && slotResult.remaining > 0;
 
@@ -315,6 +336,27 @@
       <div class="card text-center" style="animation-delay:0.32s;">
         <p class="hint mb-md">새로운 고민이 있으신가요? ✨</p>
         <button class="btn btn--primary" id="new-consult-btn">새 상담 신청하기 🌙</button>
+      </div>
+      ` : ''}
+
+      ${history.length > 0 ? `
+      <div style="margin-top:var(--sp-lg);">
+        <div class="card__title" style="padding: 0 0 var(--sp-sm) 0; color:var(--color-text-light); font-size:var(--fs-sm);">✦ 이전 상담 내역</div>
+        ${history.map((h, idx) => `
+        <div class="card" style="animation-delay:${0.08 * (idx + 1)}s;">
+          <div class="card-label">
+            <span>✍️ 제출한 사연</span>
+            <span class="meta-date">${UI.formatDate(h.createdAt)}</span>
+          </div>
+          <div class="story-card">${UI.nl2br(h.story)}</div>
+          <div class="card-label" style="margin-top:var(--sp-md);">
+            <span>🌙 레타의 답변</span>
+            <span class="meta-date">${UI.formatDate(h.answeredAt)}</span>
+          </div>
+          <div class="answer-card">${UI.nl2br(h.answer)}</div>
+          ${h.feedback ? `<div class="feedback-box" style="margin-top:var(--sp-sm);"><p class="feedback-submitted">"${UI.nl2br(h.feedback)}"</p></div>` : ''}
+        </div>
+        `).join('')}
       </div>
       ` : ''}
     `;

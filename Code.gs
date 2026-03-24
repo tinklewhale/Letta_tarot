@@ -133,7 +133,17 @@ function getUserConsultation_(params) {
     }
   }
 
-  return { success: true, consultation: found };
+  // 이전 답변 완료 상담 목록 (가장 최근 제외)
+  var history = [];
+  for (var j = 1; j < data.length; j++) {
+    var hRow = data[j];
+    if (hRow[2] === nickname && hRow[7] === 'answered' && (!found || hRow[0] !== found.id)) {
+      history.push(rowToConsultation_(hRow));
+    }
+  }
+  history.sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+
+  return { success: true, consultation: found, history: history };
 }
 
 // ── 닉네임 중복 확인 ──

@@ -103,11 +103,16 @@ async function mockCallAPI(params) {
 
   if (action === 'getUserConsultation') {
     const { nickname, passwordHash } = params;
-    const found = _mockDB.consultations.find(c => c.nickname === nickname);
-    if (found && found.passwordHash && found.passwordHash !== passwordHash) {
+    const userConsults = _mockDB.consultations
+      .filter(c => c.nickname === nickname)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    if (userConsults.length === 0) return { success: true, consultation: null, history: [] };
+    const found = userConsults[0];
+    if (found.passwordHash && found.passwordHash !== passwordHash) {
       throw new APIError('비밀번호가 올바르지 않습니다', 'AUTH_FAILED');
     }
-    return { success: true, consultation: found || null };
+    const history = userConsults.slice(1).filter(c => c.status === 'answered');
+    return { success: true, consultation: found, history };
   }
 
   if (action === 'submitConsultation') {
