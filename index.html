@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="레타의 타로 상담 - 나의 이야기를 들려주세요">
+  <title>레타의 타로 상담 🌙</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- 헤더 -->
+    <header class="site-header">
+      <span class="site-header__logo">🌙 레타의 타로</span>
+      <span class="site-header__sub">✦ 타로 상담 서비스 ✦</span>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <div class="card card--magical" style="animation-delay: 0s;">
+      <div class="hero">
+        <span class="hero__icon">🔮</span>
+        <h1 class="hero__title">레타의 타로 상담</h1>
+        <p class="hero__desc">나의 이야기를 솔직하게 들려주세요.
+카드가 당신에게 전하는 메시지를
+1:1로 정성껏 전해드립니다 ✨</p>
+      </div>
+    </div>
+
+    <!-- 잔여 상담 수 -->
+    <div class="card" style="animation-delay: 0.08s;" id="slot-card">
+      <div class="slot-counter" id="slot-display">
+        <div class="loading-screen" style="padding: var(--sp-md) 0;">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 로그인 카드 -->
+    <div class="card" style="animation-delay: 0.16s;">
+      <div class="card__title">상담 입장</div>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label class="label" for="nickname">닉네임</label>
+          <input
+            class="input"
+            type="text"
+            id="nickname"
+            placeholder="사용하실 닉네임을 입력하세요"
+            maxlength="20"
+            autocomplete="off"
+            autocapitalize="off"
+          >
+          <span class="error-msg hidden" id="nickname-error"></span>
+          <span class="info-msg hidden" id="nickname-info"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="label" for="password">비밀번호</label>
+          <div class="pw-wrap">
+            <input
+              class="input"
+              type="password"
+              id="password"
+              placeholder="8자 이상, 대문자 또는 특수문자 1개 이상"
+              maxlength="30"
+              autocomplete="current-password"
+            >
+            <button type="button" class="btn-pw-toggle" id="pw-toggle" aria-label="비밀번호 표시/숨기기">
+              <svg id="pw-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="error-msg hidden" id="password-error"></span>
+        </div>
+
+        <p class="hint mb-md" style="background: rgba(200,168,232,0.1); border-radius: var(--radius-sm); padding: var(--sp-sm) var(--sp-md);">
+          🌸 처음 오신 분은 원하시는 닉네임과 비밀번호를 자유롭게 설정하세요.<br>
+          다음 방문 시 동일한 닉네임+비밀번호로 로그인하시면 돼요.
+        </p>
+
+        <span class="error-msg hidden" id="form-error"></span>
+
+        <button type="submit" class="btn btn--primary btn--full" id="login-btn">
+          ✨ 입장하기
+        </button>
+      </form>
+    </div>
+
+    <!-- 안내 카드 -->
+    <div class="card" style="animation-delay: 0.24s;">
+      <div class="card__title">이용 안내</div>
+      <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--sp-sm);">
+        <li class="hint">🌙 닉네임과 비밀번호만으로 이용 가능해요 (회원가입 불필요)</li>
+        <li class="hint">✦ 상담은 하루 한 건씩 신청 가능해요</li>
+        <li class="hint">🌸 답변은 1~3일 내로 작성됩니다</li>
+        <li class="hint">⚠️ 닉네임과 비밀번호를 잊으시면 이전 상담을 찾기 어려워요</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

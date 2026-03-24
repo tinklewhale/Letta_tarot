@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 콘솔 ✦ 레타의 타로</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page-wrapper page-wrapper--wide">
+
+    <!-- 헤더 -->
+    <header class="site-header">
+      <span class="site-header__logo">🌙 레타의 타로</span>
+      <div class="site-header__right" id="admin-header-actions" style="display:none;">
+        <a href="admin-settings.html" class="btn btn--ghost btn--sm">⚙️ 설정</a>
+        <button class="btn btn--ghost btn--sm" id="admin-logout-btn">로그아웃</button>
+      </div>
+    </header>
+
+    <!-- 로그인 섹션 -->
+    <div id="login-section">
+      <div class="card card--magical" style="max-width:380px; margin:var(--sp-xl) auto 0;">
+        <div class="hero" style="padding:var(--sp-md) 0 var(--sp-sm);">
+          <span class="hero__icon" style="font-size:2.5rem;">🔐</span>
+          <h1 class="hero__title" style="font-size:var(--fs-lg);">관리자 로그인</h1>
+        </div>
+        <div class="form-group">
+          <label class="label" for="admin-password">관리자 비밀번호</label>
+          <div class="pw-wrap">
+            <input class="input" type="password" id="admin-password" placeholder="비밀번호 입력" autocomplete="current-password">
+            <button type="button" class="btn-pw-toggle" id="admin-pw-toggle" aria-label="비밀번호 표시/숨기기">
+              <svg id="admin-pw-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="error-msg hidden" id="admin-pw-error"></span>
+        </div>
+        <button class="btn btn--primary btn--full" id="admin-login-btn">로그인</button>
+        <div class="text-center mt-md">
+          <a href="index.html" class="hint" style="font-size:var(--fs-xs);">← 메인으로 돌아가기</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 메인 관리자 섹션 (로그인 후 표시) -->
+    <div id="admin-section" style="display:none;">
+
+      <!-- 요약 바 -->
+      <div class="card" style="padding:var(--sp-md);">
+        <div class="flex-between" style="flex-wrap:wrap; gap:var(--sp-sm);">
+          <div id="stats-summary" class="hint">로딩 중...</div>
+          <button class="btn btn--ghost btn--sm" id="refresh-btn">🔄 새로고침</button>
+        </div>
+      </div>
+
+      <!-- 탭 필터 -->
+      <div class="tab-bar" id="tab-bar">
+        <button class="tab-btn is-active" data-status="all">전체</button>
+        <button class="tab-btn" data-status="pending">⏳ 대기중</button>
+        <button class="tab-btn" data-status="answered">✅ 완료</button>
+        <button class="tab-btn" data-status="rejected">🌙 거절</button>
+      </div>
+
+      <!-- 상담 목록 -->
+      <div id="consultation-list"></div>
+
+    </div>
+
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
