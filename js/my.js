@@ -124,10 +124,17 @@
             개인을 특정할 수 있는 정보는 수집하지 않으며, 닉네임도 변경하여 사용될 수 있습니다.<br><br>
             동의하지 않으실 경우에도 상담은 정상적으로 진행되며, 해당 사연은 콘텐츠로 제작되지 않습니다.
           </p>
-          <label class="consent-check">
-            <input type="checkbox" id="consent-checkbox">
-            <span class="consent-check__label">위 내용을 읽었으며, 콘텐츠 활용에 동의합니다 (선택)</span>
-          </label>
+          <div style="display:flex;flex-direction:column;gap:var(--sp-sm);margin-top:var(--sp-sm);">
+            <label class="consent-check">
+              <input type="radio" name="consent" id="consent-yes" value="yes">
+              <span class="consent-check__label">위 내용을 읽었으며, 콘텐츠 활용에 동의합니다</span>
+            </label>
+            <label class="consent-check">
+              <input type="radio" name="consent" id="consent-no" value="no">
+              <span class="consent-check__label">동의하지 않습니다</span>
+            </label>
+          </div>
+          <p class="error-msg hidden" id="consent-error">항목을 선택해주세요.</p>
         </div>
         <button class="btn btn--primary btn--full mt-md" id="consent-next-btn">다음으로 →</button>
       </div>
@@ -153,8 +160,8 @@
       </div>
     `;
 
-    const consentCheckbox = document.getElementById('consent-checkbox');
     const consentNextBtn = document.getElementById('consent-next-btn');
+    const consentError = document.getElementById('consent-error');
     const consentCard = document.getElementById('consent-card');
     const storyCard = document.getElementById('story-card');
     const storyInput = document.getElementById('story-input');
@@ -163,8 +170,18 @@
     const storyBackBtn = document.getElementById('story-back-btn');
     const submitBtn = document.getElementById('submit-btn');
 
+    // 라디오 선택 시 에러 숨기기
+    document.querySelectorAll('input[name="consent"]').forEach(radio => {
+      radio.addEventListener('change', () => consentError.classList.add('hidden'));
+    });
+
     // 동의 다음 버튼
     consentNextBtn.addEventListener('click', () => {
+      const selected = document.querySelector('input[name="consent"]:checked');
+      if (!selected) {
+        consentError.classList.remove('hidden');
+        return;
+      }
       consentCard.classList.add('hidden');
       storyCard.classList.remove('hidden');
       storyInput.focus();
@@ -215,7 +232,9 @@
         UI.closeModal();
         UI.showLoading(submitBtn, '신청 중...');
         try {
-          await API.submitConsultation(user.nickname, user.password, story, consentCheckbox.checked);
+          const consentSelected = document.querySelector('input[name="consent"]:checked');
+          const consentGiven = consentSelected ? consentSelected.value === 'yes' : false;
+          await API.submitConsultation(user.nickname, user.password, story, consentGiven);
           UI.showToast('상담이 신청되었어요! ✨', 'success');
           await loadPage();
         } catch (err) {

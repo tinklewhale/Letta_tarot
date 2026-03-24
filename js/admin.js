@@ -198,8 +198,8 @@
     }[c.status] || '';
 
     const consentTag = c.consent
-      ? `<span style="font-size:var(--fs-xs);color:var(--color-text-light);">📋 활용동의</span>`
-      : `<span style="font-size:var(--fs-xs);color:var(--color-text-light);">❌ 비동의</span>`;
+      ? `<span style="font-size:var(--fs-xs);color:var(--color-primary);background:rgba(200,168,232,0.15);padding:2px 6px;border-radius:4px;">📋 활용동의</span>`
+      : `<span style="font-size:var(--fs-xs);color:#999;background:rgba(0,0,0,0.06);padding:2px 6px;border-radius:4px;">🚫 비동의</span>`;
 
     const bodyContent = c.status === 'pending'
       ? renderPendingBody(c)
