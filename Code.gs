@@ -52,6 +52,19 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+// ── POST 라우터 (긴 텍스트 전송용) ──
+function doPost(e) {
+  var params = {};
+  try {
+    params = JSON.parse((e.postData && e.postData.contents) || '{}');
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, message: '잘못된 요청입니다', code: 'BAD_REQUEST' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  return doGet({ parameter: params });
+}
+
 // ── 관리자 인증 ──
 function adminLogin_(params) {
   var passwordHash = params.passwordHash || '';

@@ -42,6 +42,28 @@ async function callAPI(params) {
   return data;
 }
 
+/* ── POST API 호출 (긴 텍스트 전송용, Content-Type: text/plain → preflight 없음) ── */
+async function callAPIPost(params) {
+  const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    throw new APIError(`서버 오류 (HTTP ${response.status})`, 'HTTP_ERROR');
+  }
+
+  const data = await response.json();
+
+  if (data.success === false) {
+    throw new APIError(data.message || '알 수 없는 오류가 발생했습니다', data.code);
+  }
+
+  return data;
+}
+
 /* ──────────────────────────────────────
    Mock 데이터 (MOCK_MODE: true 일 때 사용)
    ────────────────────────────────────── */
@@ -243,7 +265,9 @@ window.API = (() => {
     },
 
     submitAnswer: (id, answer, adminToken) =>
-      call({ action: 'submitAnswer', id, answer, adminToken }),
+      CONFIG.MOCK_MODE
+        ? call({ action: 'submitAnswer', id, answer, adminToken })
+        : callAPIPost({ action: 'submitAnswer', id, answer, adminToken }),
 
     updateStatus: (id, status, adminToken) =>
       call({ action: 'updateStatus', id, status, adminToken }),
